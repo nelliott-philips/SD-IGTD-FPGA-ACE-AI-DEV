@@ -1,3 +1,6 @@
 *~
 .#*
 #*#
+test_example/results.csv
+test_example/ipcore_dir/poc_bpf_fir.v
+test_example/coregen.log

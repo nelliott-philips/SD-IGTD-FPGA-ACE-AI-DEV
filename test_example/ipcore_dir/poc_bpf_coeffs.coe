@@ -1,0 +1,25 @@
+;# poc_bpf_coeffs.coe
+;# POC bandpass FIR coefficients -- contrived, not production data
+radix = 10;
+coefdata =
+201,
+-9,
+638,
+474,
+-4871,
+-1424,
+14183,
+1867,
+-24760,
+-888,
+29490,
+-888,
+-24760,
+1867,
+14183,
+-1424,
+-4871,
+474,
+638,
+-9,
+201;
