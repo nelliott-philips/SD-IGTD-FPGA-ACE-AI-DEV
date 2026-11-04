@@ -76,14 +76,34 @@ up to date with no manual or AI involvement per run -- see the comments at
 the top of that script for the one-time interactive setup (clone + cache a
 credential) and the cron entry to add afterward.
 
+## Automated SFTP sync (no VM credentials, no polling)
+
+Two more scripts, both avoiding any GitHub credential on the VM since the
+clone/push already happened on the host:
+
+- **`scripts/sync_to_vm_stable.sh`** -- overwrites one stable directory,
+  `/repos/ai_ace_development_live`, via an atomic directory swap (extract
+  into a fresh `.new` dir, then rename it into place -- a build process
+  reading the live directory mid-sync always sees either the complete old
+  tree or the complete new one, never a half-updated mix). Runs on a
+  **Windows Scheduled Task** (`AI_ACE_Dev_VM_Stable_Sync`, every 4 hours --
+  `schtasks /query /tn AI_ACE_Dev_VM_Stable_Sync /v` to inspect, logs to
+  `sync_to_vm_stable.log` in the repo root). ~3 minutes per run with the
+  current `firmware/` tree (~29k files) -- budget the schedule accordingly
+  if that grows.
+- **`scripts/push_and_sync.sh`** -- event-driven alternative: use this in
+  place of `git push` and it triggers an immediate VM sync (via
+  `vm_sync_from_github.sh`, see above) the instant the push succeeds. No
+  polling at all, fires exactly once per push. Only catches pushes that go
+  through this wrapper, though -- a plain `git push` from elsewhere won't
+  trigger it.
+
 ## Deploying a one-off snapshot to the VM
 
 For a deliberate point-in-time snapshot instead of continuous sync (e.g. to
 freeze a specific state for a build), `scripts/deploy_to_vm.sh` packages
 this whole repo (no `.git` metadata) and ships it to a **new timestamped
-directory** under `/repos` on the VM -- the VM never needs GitHub
-credentials for this path, since the clone/push already happened on the
-host:
+directory** under `/repos` on the VM:
 
 ```sh
 ./scripts/deploy_to_vm.sh
