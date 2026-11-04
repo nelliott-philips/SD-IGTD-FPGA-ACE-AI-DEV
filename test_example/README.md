@@ -33,6 +33,12 @@ any production files or data.
 - `run_test.sh` -- **the one command to run on the VM** to regenerate,
   compile, simulate, and check everything, with clear step-by-step output
   and a final PASS/FAIL.
+- `plot_results.py` -- host-side (needs numpy + matplotlib, not run on the
+  VM). Plots `results.csv` as a 2x2 grid: time domain in the left column
+  (input over output), frequency domain (FFT magnitude, dB by default) in
+  the right column (input over output), with the designed passband shaded
+  on both frequency panels. Input is blue, output is orange, consistently
+  across all four panels.
 
 ## Running it
 
@@ -60,6 +66,12 @@ fuse -intstyle "ise" -incremental \
      -o "sim_exe" -prj "sim.prj" "work.poc_bpf_tb" "work.glbl"
 ./sim_exe -tclbatch run.tcl
 python check_results.py results.csv   # or: python2 check_results.py results.csv
+```
+
+To visualize the run after pulling `results.csv` back to the host:
+```sh
+python plot_results.py results.csv            # opens an interactive window
+python plot_results.py results.csv --save plot.png --no-show   # headless/scripted
 ```
 
 ## Lessons learned
