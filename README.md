@@ -17,6 +17,10 @@ needs to work on the ACE Focus/ACE Image Virtex-6 FPGA sources.
   runbook for giving an AI assistant SSH/SFTP access to the frozen ISE build
   VM, including a pitfall we hit (and how to avoid it) when installing SSH
   keys into an old guest console.
+- [`docs/vm-scheduled-sync-task.md`](docs/vm-scheduled-sync-task.md) — **the
+  Windows Scheduled Task that auto-syncs this repo to the VM every 4 hours**
+  (the one piece of this automation that *isn't* in git — it's host-machine
+  state). Diagrams, and how to inspect/disable/remove/modify it.
 - `firmware/` — the real `SD-IGTD-ACE-FPGA` repo as a git submodule (its own
   history stays independent; this repo just tracks which commit applies),
   including its own nested submodules (`SD-ACE1-*-FPGA`, `SD-ACE2-*-FPGA`).
@@ -86,11 +90,13 @@ clone/push already happened on the host:
   into a fresh `.new` dir, then rename it into place -- a build process
   reading the live directory mid-sync always sees either the complete old
   tree or the complete new one, never a half-updated mix). Runs on a
-  **Windows Scheduled Task** (`AI_ACE_Dev_VM_Stable_Sync`, every 4 hours --
-  `schtasks /query /tn AI_ACE_Dev_VM_Stable_Sync /v` to inspect, logs to
-  `sync_to_vm_stable.log` in the repo root). ~3 minutes per run with the
-  current `firmware/` tree (~29k files) -- budget the schedule accordingly
-  if that grows.
+  **Windows Scheduled Task** (`AI_ACE_Dev_VM_Stable_Sync`, every 4 hours).
+  ~3 minutes per run with the current `firmware/` tree (~29k files) --
+  budget the schedule accordingly if that grows. **Full details, diagrams,
+  and how to inspect/disable/remove/modify the task:
+  [`docs/vm-scheduled-sync-task.md`](docs/vm-scheduled-sync-task.md)** --
+  installed/removed via `scripts/install_scheduled_task.sh` /
+  `scripts/uninstall_scheduled_task.sh`, both tracked in this repo.
 - **`scripts/push_and_sync.sh`** -- event-driven alternative: use this in
   place of `git push` and it triggers an immediate VM sync (via
   `vm_sync_from_github.sh`, see above) the instant the push succeeds. No
