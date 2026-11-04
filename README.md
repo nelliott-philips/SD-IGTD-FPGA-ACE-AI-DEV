@@ -68,11 +68,22 @@ bit-for-bit identical to already test-pattern-validated hardware. See
 `docs/vm-ssh-sftp-setup.md` for how AI tooling reaches that VM without
 touching it.
 
-## Deploying to the VM
+## Keeping the VM concurrent with GitHub
 
-The VM builds FPGA sources but never needs its own GitHub credentials --
-`scripts/deploy_to_vm.sh` packages this whole repo (no `.git` metadata) and
-ships it to a new timestamped directory under `/repos` on the VM:
+Changes flow one way: host -> GitHub -> VM. `scripts/vm_sync_from_github.sh`
+runs on a cron schedule **on the VM** and keeps its checkout continuously
+up to date with no manual or AI involvement per run -- see the comments at
+the top of that script for the one-time interactive setup (clone + cache a
+credential) and the cron entry to add afterward.
+
+## Deploying a one-off snapshot to the VM
+
+For a deliberate point-in-time snapshot instead of continuous sync (e.g. to
+freeze a specific state for a build), `scripts/deploy_to_vm.sh` packages
+this whole repo (no `.git` metadata) and ships it to a **new timestamped
+directory** under `/repos` on the VM -- the VM never needs GitHub
+credentials for this path, since the clone/push already happened on the
+host:
 
 ```sh
 ./scripts/deploy_to_vm.sh
