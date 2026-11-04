@@ -1,0 +1,12 @@
+# Files that run as-is on the Linux VM must always check out with LF line
+# endings, regardless of the cloning host's core.autocrlf setting --
+# otherwise shell scripts fail with "bad interpreter: /bin/sh^M" on Windows
+# checkouts (found via a fresh-clone reproducibility test).
+*.sh  text eol=lf
+*.tcl text eol=lf
+*.prj text eol=lf
+*.v   text eol=lf
+*.py  text eol=lf
+*.xco text eol=lf
+*.cgp text eol=lf
+*.coe text eol=lf
